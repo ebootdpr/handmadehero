@@ -4,7 +4,7 @@ project(itsatrap VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_executable(itsatrap main.cpp)
+add_executable(itsatrap src/main.cpp)
 #target_link_libraries(itsatrap libraylib.so)
 target_link_libraries(itsatrap /usr/local/lib/libraylib.so.450)
 
