@@ -3,38 +3,65 @@
 #include <array>
 #include <cmath>
 #include <iterator>
+#include <math.h>
 #include <valarray>
 
-struct Stats {
+struct stats {
   int max_speed;
   int h;
   int r;
 };
+struct v2 {
+  float x;
+  float y;
+};
+float dot_product(v2 a, v2 b) { return a.x * a.x + b.x + b.x; }
+
+void add(v2 a, v2 *b) {
+  b->x += a.x;
+  b->y += a.y;
+}
+
+void sub(v2 a, v2 *b) {
+  b->x -= a.x;
+  b->y -= a.y;
+}
+
+float module(v2 a) { return sqrtf(a.x * a.x + a.y * a.y); }
+
+float cos_angle(v2 u, v2 v) {
+  return (dot_product(u, v)) / (module(u) * module(v));
+}
+
+v2 dir(v2 u) {
+  v2 direction;
+  float mod = module(u);
+  direction.x = u.x / mod;
+  direction.y = u.y / mod;
+  return direction;
+}
+
 struct Entity {
   int id;
-  int x;
-  int y;
-  int velx;
-  int vely;
+  v2 pos;
+  v2 vel;
   int w;
   int h;
   int r;
-  Stats stats;
+  stats stt;
 };
 
-void System_Physics_FirstNewtonLaw(Entity &P) {
-  P.x += P.velx;
-  P.y += P.vely;
-}
+void System_Physics_FirstNewtonLaw(Entity *P) { add(P->vel, &P->pos); }
 
 void System_Physics_CollideWitWorldBorders(Entity &P, int x_max, int y_max) {
-  if (P.x > x_max || P.x < 20) {
-    P.velx = -P.velx * 0.68;
-    P.x += 2 * P.velx;
+
+  if (P.pos.x > x_max || P.pos.x < 20) {
+    P.vel.x = -P.vel.x * 0.68;
+    P.pos.x += 2 * P.vel.x;
   }
-  if (P.y > y_max || P.y < 20) {
-    P.vely = -P.vely * 0.68;
-    P.y += 2 * P.vely;
+  if (P.pos.y > y_max || P.pos.y < 20) {
+    P.vel.y = -P.vel.y * 0.68;
+    P.pos.y += 2 * P.vel.y;
   }
 }
 
@@ -45,26 +72,32 @@ void System_Physics_CollideWithEntities(Entity *Players[], int lenP,
     Entity P = *Players[i];
     for (int j = 0; j < lenO; j++) {
       Entity O = *Obstacles[j];
-      // int d = std::sqrt(std::pow(P.x - O.x, 2) + std::pow(P.y - O.y, 2));
-      if (P.y + P.r > O.y && P.y - P.r < O.y + O.h) {
-        if (P.x + P.r > O.x && P.x - P.r < O.x + O.w) {
+      if (P.pos.y + P.r > O.pos.y - 5 && P.pos.y - P.r < O.pos.y + O.h + 5) {
+        if (P.pos.x + P.r > O.pos.x - 5 && P.pos.x - P.r < O.pos.x + O.w + 5) {
 
-          // COLLIDING!!!
-          // STRATEGY, MEASURE FROM THE CENTER AND DITCH IT!
-          // Too bad!
-          // Better: 8 ifs conditionals
-          if (P.x > O.x + O.w - 1) { // RIGHT
-            Players[i]->velx = -P.velx * 0.8;
-            Players[i]->x = P.x + P.velx;
-          } else if (P.y > O.y + O.h - 1) { // BOTTOM
-            Players[i]->vely = -P.vely * 0.8;
-            Players[i]->y = P.y - P.vely;
-          } else if (P.x < O.x + 1) { // LEFT
-            Players[i]->velx = -P.velx * 0.8;
-            Players[i]->x = P.x - P.velx;
-          } else if (P.y < O.y + 1) { // TOP
-            Players[i]->vely = -P.vely * 0.8;
-            Players[i]->y = P.y - P.vely;
+          int d1 = std::sqrt(std::pow(P.pos.x - O.pos.x, 2) + std::pow(P.pos.y - O.pos.y, 2));
+          int d2 = std::sqrt(std::pow(P.pos.x - (O.pos.x + O.w), 2) +
+                             std::pow(P.pos.y - O.pos.y, 2));
+          int d3 = std::sqrt(std::pow(P.pos.x - O.pos.x, 2) +
+                             std::pow(P.pos.y - (O.pos.y + O.h), 2));
+          int d4 = std::sqrt(std::pow(P.pos.x - (O.pos.x + O.w), 2) +
+                             std::pow(P.pos.y - (O.pos.y + O.h), 2));
+          /* int dir1 = Players[i]->vel.x = */
+              // COLLIDING!!!
+          DrawCircle((int)P.pos.x, (int)P.pos.y, (int)2 * P.r, MAGENTA);
+          
+          if (P.pos.x > O.pos.x + O.w) { // RIGHT
+            Players[i]->vel.x = -P.vel.x * 0.8;
+            Players[i]->pos.x = P.pos.x + P.vel.x;
+          } else if (P.pos.y > O.pos.y + O.h) { // BOTTOM
+            Players[i]->vel.y = -P.vel.y * 0.8;
+            Players[i]->pos.y = P.pos.y - P.vel.y;
+          } else if (P.pos.x < O.pos.x) { // LEFT
+            Players[i]->vel.x = -P.vel.x * 0.8;
+            Players[i]->pos.x = P.pos.x - P.vel.x;
+          } else if (P.pos.y < O.pos.y) { // TOP
+            Players[i]->vel.y = -P.vel.y * 0.8;
+            Players[i]->pos.y = P.pos.y - P.vel.y;
           }
         }
       }
@@ -86,26 +119,26 @@ int main() {
 
   Entity Player = *new Entity{};
   Player.id = 0;
-  Player.x = 50;
-  Player.y = 50;
+  Player.pos.x = 50;
+  Player.pos.y = 50;
   Player.r = 24;
   Player.h = Player.w = 2 * Player.r;
-  Player.stats.max_speed = 5;
+  Player.stt.max_speed = 5;
 
   Entity Obstacle = *new Entity{};
   Obstacle.id = 1;
   Obstacle.h = 50;
   Obstacle.w = 100;
-  Obstacle.x = 150;
-  Obstacle.y = 150;
+  Obstacle.pos.x = 150;
+  Obstacle.pos.y = 150;
   Obstacle.r = std::sqrt(std::pow(Obstacle.h, 2) + std::pow(Obstacle.w, 2));
 
   Entity wall1 = *new Entity{};
   wall1.id = 1;
   wall1.h = 50;
   wall1.w = 600;
-  wall1.x = 150;
-  wall1.y = 350;
+  wall1.pos.x = 150;
+  wall1.pos.y = 350;
   wall1.r = std::sqrt(std::pow(wall1.h, 2) + std::pow(wall1.w, 2));
   std::array<Entity, 2> asd = {Obstacle, wall1};
 
@@ -123,28 +156,28 @@ int main() {
 
     // Here goes all the Game Logic
     // Circle Movement
-    if (IsKeyDown(KEY_W) && Player.y > Player.r) {
-      Player.vely -= 1;
+    if (IsKeyDown(KEY_W) && Player.pos.y > Player.r) {
+      Player.vel.y -= 1;
     }
-    if (IsKeyDown(KEY_A) && Player.x > Player.r) {
-      Player.velx -= 1;
+    if (IsKeyDown(KEY_A) && Player.pos.x > Player.r) {
+      Player.vel.x -= 1;
     }
-    if (IsKeyDown(KEY_S) && Player.y < screenHeight - Player.r) {
-      Player.vely += 1;
+    if (IsKeyDown(KEY_S) && Player.pos.y < screenHeight - Player.r) {
+      Player.vel.y += 1;
     }
-    if (IsKeyDown(KEY_D) && Player.x < screenWidth - Player.r) {
-      Player.velx += 1;
+    if (IsKeyDown(KEY_D) && Player.pos.x < screenWidth - Player.r) {
+      Player.vel.x += 1;
     }
-    std::clamp(Player.velx, -Player.stats.max_speed, Player.stats.max_speed);
-
-    System_Physics_FirstNewtonLaw(Player);
+    /* std::clamp(Player.vel.x, -Player.stt.max_speed, Player.stt.max_speed);
+    std::clamp() */
+    System_Physics_FirstNewtonLaw(&Player);
     System_Physics_CollideWitWorldBorders(Player, screenWidth, screenHeight);
     System_Physics_CollideWithEntities(scene_players, max_p, scene_obstacles,
                                        max_o);
     // Draws a Circle in the Canvas(X Axis, Y Axis, Radius, Color)
-    DrawCircle(Player.x, Player.y, Player.r, BLUE);
-    DrawRectangle(Obstacle.x, Obstacle.y, Obstacle.w, Obstacle.h, RED);
-    DrawRectangle(wall1.x, wall1.y, wall1.w, wall1.h, RED);
+    DrawCircle(Player.pos.x, Player.pos.y, Player.r, BLUE);
+    DrawRectangle(Obstacle.pos.x, Obstacle.pos.y, Obstacle.w, Obstacle.h, RED);
+    DrawRectangle(wall1.pos.x, wall1.pos.y, wall1.w, wall1.h, RED);
 
     // teardown Canvas
     EndDrawing();
