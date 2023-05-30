@@ -22,6 +22,10 @@ void add(v2 a, v2 *b) {
   b->x += a.x;
   b->y += a.y;
 }
+void add(v2 a, v2 *b, float mass) {
+  b->x += a.x / mass;
+  b->y += a.y / mass;
+}
 
 void sub(v2 a, v2 *b) {
   b->x -= a.x;
@@ -56,6 +60,9 @@ struct Entity {
 };
 
 void System_Physics_FirstNewtonLaw(Entity *P) { add(P->vel, &P->pos); }
+void System_Physics_SecondNewtonLaw(Entity *P) {
+  add(P->acc, &P->vel, P->mass);
+}
 
 void System_Physics_CollideWitWorldBorders(Entity &P, int x_max, int y_max) {
 
@@ -79,7 +86,8 @@ void System_Physics_CollideWithEntities(Entity *Players[], int lenP,
       if (P.pos.y + P.r > O.pos.y - 5 && P.pos.y - P.r < O.pos.y + O.h + 5) {
         if (P.pos.x + P.r > O.pos.x - 5 && P.pos.x - P.r < O.pos.x + O.w + 5) {
 
-          int d1 = std::sqrt(std::pow(P.pos.x - O.pos.x, 2) + std::pow(P.pos.y - O.pos.y, 2));
+          int d1 = std::sqrt(std::pow(P.pos.x - O.pos.x, 2) +
+                             std::pow(P.pos.y - O.pos.y, 2));
           int d2 = std::sqrt(std::pow(P.pos.x - (O.pos.x + O.w), 2) +
                              std::pow(P.pos.y - O.pos.y, 2));
           int d3 = std::sqrt(std::pow(P.pos.x - O.pos.x, 2) +
@@ -87,9 +95,9 @@ void System_Physics_CollideWithEntities(Entity *Players[], int lenP,
           int d4 = std::sqrt(std::pow(P.pos.x - (O.pos.x + O.w), 2) +
                              std::pow(P.pos.y - (O.pos.y + O.h), 2));
           /* int dir1 = Players[i]->vel.x = */
-              // COLLIDING!!!
+          // COLLIDING!!!
           DrawCircle((int)P.pos.x, (int)P.pos.y, (int)2 * P.r, MAGENTA);
-          
+
           if (P.pos.x > O.pos.x + O.w) { // RIGHT
             Players[i]->vel.x = -P.vel.x * 0.8;
             Players[i]->pos.x = P.pos.x - P.vel.x;
@@ -109,13 +117,13 @@ void System_Physics_CollideWithEntities(Entity *Players[], int lenP,
   }
 }
 int current_id = 0;
-Entity create_entity(int width,int height) {
+Entity create_entity(int width, int height) {
   Entity E = *new Entity();
   E.id = current_id++;
   E.h = height;
   E.w = width;
-  E.pos.x = std::rand()/6000000;
-  E.pos.y = std::rand()/6000000;
+  E.pos.x = std::rand() / 6000000;
+  E.pos.y = std::rand() / 6000000;
   E.r = std::sqrt(std::pow(E.h, 2) + std::pow(E.w, 2));
   return E;
 }
@@ -135,17 +143,22 @@ int main() {
   Player.id = 0;
   Player.pos.x = 50;
   Player.pos.y = 50;
+  Player.vel.x = 0;
+  Player.vel.y = 0;
+  Player.acc.x = 0;
+  Player.acc.y = 1;
+
+  Player.mass= 4;
   Player.r = 24;
   Player.h = Player.w = 2 * Player.r;
   Player.stt.max_speed = 5;
 
-  Entity Obstacle = create_entity(50,200);
-    Entity wall1 =  create_entity(500,20);
-    Entity wall2 =  create_entity(500,20);
-    Entity wall3 =  create_entity(500,20);
+  Entity Obstacle = create_entity(50, 200);
+  Entity wall1 = create_entity(500, 20);
+  Entity wall2 = create_entity(500, 20);
+  Entity wall3 = create_entity(500, 20);
 
-
-  Entity *scene_obstacles[4] = {&Obstacle, &wall1,&wall2,&wall3};
+  Entity *scene_obstacles[4] = {&Obstacle, &wall1, &wall2, &wall3};
   int max_o = 4;
   Entity *scene_players[1] = {&Player};
   int max_p = 1;
@@ -174,13 +187,15 @@ int main() {
     /* std::clamp(Player.vel.x, -Player.stt.max_speed, Player.stt.max_speed);
     std::clamp() */
     System_Physics_FirstNewtonLaw(&Player);
+    System_Physics_SecondNewtonLaw(&Player);
     System_Physics_CollideWitWorldBorders(Player, screenWidth, screenHeight);
     System_Physics_CollideWithEntities(scene_players, max_p, scene_obstacles,
                                        max_o);
     // Draws a Circle in the Canvas(X Axis, Y Axis, Radius, Color)
     DrawCircle(static_cast<int>(Player.pos.x), Player.pos.y, Player.r, BLUE);
-    for ( int i=0;i<max_o;i++){
-      DrawRectangle(scene_obstacles[i]-> pos.x, scene_obstacles[i]-> pos.y, scene_obstacles[i]-> w, scene_obstacles[i]-> h, RED);
+    for (int i = 0; i < max_o; i++) {
+      DrawRectangle(scene_obstacles[i]->pos.x, scene_obstacles[i]->pos.y,
+                    scene_obstacles[i]->w, scene_obstacles[i]->h, RED);
     }
 
     // teardown Canvas
