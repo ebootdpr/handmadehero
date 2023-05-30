@@ -92,7 +92,7 @@ void System_Physics_CollideWithEntities(Entity *Players[], int lenP,
           
           if (P.pos.x > O.pos.x + O.w) { // RIGHT
             Players[i]->vel.x = -P.vel.x * 0.8;
-            Players[i]->pos.x = P.pos.x + P.vel.x;
+            Players[i]->pos.x = P.pos.x - P.vel.x;
           } else if (P.pos.y > O.pos.y + O.h) { // BOTTOM
             Players[i]->vel.y = -P.vel.y * 0.8;
             Players[i]->pos.y = P.pos.y - P.vel.y;
