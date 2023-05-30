@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdlib>
 #include <iterator>
 #include <math.h>
 #include <valarray>
@@ -45,6 +46,9 @@ struct Entity {
   int id;
   v2 pos;
   v2 vel;
+  v2 acc;
+  float mass;
+
   int w;
   int h;
   int r;
@@ -104,7 +108,17 @@ void System_Physics_CollideWithEntities(Entity *Players[], int lenP,
     }
   }
 }
-
+int current_id = 0;
+Entity create_entity(int width,int height) {
+  Entity E = *new Entity();
+  E.id = current_id++;
+  E.h = height;
+  E.w = width;
+  E.pos.x = std::rand()/6000000;
+  E.pos.y = std::rand()/6000000;
+  E.r = std::sqrt(std::pow(E.h, 2) + std::pow(E.w, 2));
+  return E;
+}
 int main() {
   // Determin the Game Window Width and Height
   const int screenWidth = 800;
@@ -125,25 +139,14 @@ int main() {
   Player.h = Player.w = 2 * Player.r;
   Player.stt.max_speed = 5;
 
-  Entity Obstacle = *new Entity{};
-  Obstacle.id = 1;
-  Obstacle.h = 50;
-  Obstacle.w = 100;
-  Obstacle.pos.x = 150;
-  Obstacle.pos.y = 150;
-  Obstacle.r = std::sqrt(std::pow(Obstacle.h, 2) + std::pow(Obstacle.w, 2));
+  Entity Obstacle = create_entity(50,200);
+    Entity wall1 =  create_entity(500,20);
+    Entity wall2 =  create_entity(500,20);
+    Entity wall3 =  create_entity(500,20);
 
-  Entity wall1 = *new Entity{};
-  wall1.id = 1;
-  wall1.h = 50;
-  wall1.w = 600;
-  wall1.pos.x = 150;
-  wall1.pos.y = 350;
-  wall1.r = std::sqrt(std::pow(wall1.h, 2) + std::pow(wall1.w, 2));
-  std::array<Entity, 2> asd = {Obstacle, wall1};
 
-  Entity *scene_obstacles[2] = {&Obstacle, &wall1};
-  int max_o = 2;
+  Entity *scene_obstacles[4] = {&Obstacle, &wall1,&wall2,&wall3};
+  int max_o = 4;
   Entity *scene_players[1] = {&Player};
   int max_p = 1;
   // The Game Loop
@@ -175,9 +178,10 @@ int main() {
     System_Physics_CollideWithEntities(scene_players, max_p, scene_obstacles,
                                        max_o);
     // Draws a Circle in the Canvas(X Axis, Y Axis, Radius, Color)
-    DrawCircle(Player.pos.x, Player.pos.y, Player.r, BLUE);
-    DrawRectangle(Obstacle.pos.x, Obstacle.pos.y, Obstacle.w, Obstacle.h, RED);
-    DrawRectangle(wall1.pos.x, wall1.pos.y, wall1.w, wall1.h, RED);
+    DrawCircle(static_cast<int>(Player.pos.x), Player.pos.y, Player.r, BLUE);
+    for ( int i=0;i<max_o;i++){
+      DrawRectangle(scene_obstacles[i]-> pos.x, scene_obstacles[i]-> pos.y, scene_obstacles[i]-> w, scene_obstacles[i]-> h, RED);
+    }
 
     // teardown Canvas
     EndDrawing();
