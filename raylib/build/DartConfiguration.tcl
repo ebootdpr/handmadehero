@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /home/r/woRK/cpp/basics
-BuildDirectory: /home/r/woRK/cpp/basics/build
+SourceDirectory: /home/r/rat_lab/raylib
+BuildDirectory: /home/r/rat_lab/raylib/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -14,7 +14,7 @@ CostDataFile:
 Site: pop-os
 
 # Build name is osname-revision-compiler, i.e. Linux-2.4.2-2smp-c++
-BuildName: Linux-clang++
+BuildName: Linux-c++
 
 # Subprojects
 LabelsForSubprojects: 
@@ -27,7 +27,7 @@ SubmitInactivityTimeout:
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/home/r/woRK/cpp/basics"
+ConfigureCommand: "/usr/bin/cmake" "/home/r/rat_lab/raylib"
 MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}" -- -i
 DefaultCTestConfigurationType: Release
 
@@ -45,7 +45,7 @@ SVNOptions:
 SVNUpdateOptions: 
 
 # Git options
-GITCommand: /usr/bin/git
+GITCommand: 
 GITInitSubmodules: 
 GITUpdateOptions: 
 GITUpdateCustom: 
@@ -58,13 +58,13 @@ P4UpdateOptions:
 P4UpdateCustom: 
 
 # Generic update command
-UpdateCommand: /usr/bin/git
+UpdateCommand: 
 UpdateOptions: 
-UpdateType: git
+UpdateType: 
 
 # Compiler info
-Compiler: /usr/bin/clang++
-CompilerVersion: 17.0.0
+Compiler: /usr/bin/c++
+CompilerVersion: 11.3.0
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 

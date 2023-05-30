@@ -59,17 +59,7 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "/usr/share/cmake-3.26/Modules/Compiler/Clang-C.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
-			"path" : "/usr/share/cmake-3.26/Modules/Compiler/Clang.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
-			"path" : "/usr/share/cmake-3.26/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+			"path" : "/usr/share/cmake-3.26/Modules/Compiler/GNU-C.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -80,11 +70,6 @@
 			"isCMake" : true,
 			"isExternal" : true,
 			"path" : "/usr/share/cmake-3.26/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
-			"path" : "/usr/share/cmake-3.26/Modules/Platform/Linux-Clang-C.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -114,17 +99,12 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "/usr/share/cmake-3.26/Modules/Compiler/Clang-CXX.cmake"
+			"path" : "/usr/share/cmake-3.26/Modules/Compiler/GNU-CXX.cmake"
 		},
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "/usr/share/cmake-3.26/Modules/Compiler/Clang.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
-			"path" : "/usr/share/cmake-3.26/Modules/Platform/Linux-Clang-CXX.cmake"
+			"path" : "/usr/share/cmake-3.26/Modules/Compiler/GNU.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -183,8 +163,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/r/woRK/cpp/basics/build",
-		"source" : "/home/r/woRK/cpp/basics"
+		"build" : "/home/r/rat_lab/raylib/build",
+		"source" : "/home/r/rat_lab/raylib"
 	},
 	"version" : 
 	{
