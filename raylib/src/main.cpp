@@ -38,20 +38,21 @@ float cos_angle(v2 u, v2 v) {
   return (dot_product(u, v)) / (module(u) * module(v));
 }
 
+
 v2 dir(v2 u) {
-  v2 direction;
-  float mod = module(u);
-  direction.x = u.x / mod;
-  direction.y = u.y / mod;
-  return direction;
+    v2 direction;
+    float mod = module(u);
+    direction.x = u.x / mod;
+    direction.y = u.y / mod;
+    return direction;
 }
 
 struct Entity {
-  int id;
-  v2 pos;
-  v2 vel;
-  v2 acc;
-  float mass;
+    int id;
+    v2 pos;
+    v2 vel;
+    v2 acc;
+    float mass;
 
   int w;
   int h;
