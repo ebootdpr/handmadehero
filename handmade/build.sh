@@ -14,5 +14,5 @@ SOURCE_FILES="./code/unix64_handmade.cpp"
 OUTPUT_FILE="./handmade"
 
 # Build the project
-bear -- $CC $CFLAGS $SOURCE_FILES -o $OUTPUT_FILE `pkg-config --cflags --libs gtk+-3.0`
-
+# bear -- $CC $CFLAGS $SOURCE_FILES -o $OUTPUT_FILE `pkg-config --cflags --libs gtk+-3.0`
+bear -- $CC $CFLAGS -g -include sys/syscall.h -D_GNU_SOURCE $SOURCE_FILES -o $OUTPUT_FILE `pkg-config --cflags --libs x11`
